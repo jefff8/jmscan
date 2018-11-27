@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="MobileOptimized" content="320"/>
+		<title></title>
+		<link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8"/>
+	</head>
+	<body>
+		<div id="dcontent" class="dcontent">
+			<div class="button" onclick="clicked('barcode_scan.html',true,true)">扫一扫</div>
+			<div id="personInfo">
+				
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/immersed.js" ></script>
+	<script type="text/javascript" src="js/vconsole.min.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/mui.min.js"></script>
+	<script type="text/javascript">
+			var vConsole = new VConsole() // 初始化
+			var returnData = null;
+			var personInfo = document.getElementById("personInfo");
+			
+			//人员扫码后返回值
+			window.addEventListener("personInfo", function(e) {
+			    returnData = e.detail.infoObj;
+			    personInfo.innerHTML = '';
+				personInfo.innerHTML = '<h3>已确认操作人员</h3><p>姓名：'+returnData.myname+'</p><p>部门：'+returnData.department+'</p><p>职位：'+returnData.position+'</p>';
+			});
+			
+			//设备扫码后返回值
+			window.addEventListener("equipmentInfo", function(e) {
+				personInfo.innerHTML = '';
+				returnData = null;
+				mui.toast('确认成功！');
+			});
+
+			//扫码二维码
+			function scaned(t, r, f){
+				update(t, r, f);
+			}
+			
+			//获取扫码后信息
+			function update(t, r, f){
+				try {
+					// 二维码信息字符串转换为json格式
+					var infoObj=JSON.parse(r);
+					console.log(infoObj);
+					if(!infoObj.page) {
+						mui.toast('非本系统二维码，无法扫描！');
+						return false;
+					}
+					//根据二维码信息跳转不同页面
+					if(infoObj.page=='person'){
+						mui.openWindow({
+							url: "person.html",
+							extras:{
+								infoObj:infoObj
+							},
+							styles: {
+								popGesture:"close"
+							}
+						})
+					}else if(infoObj.page=='equipment' && returnData){
+						mui.openWindow({
+							url: "equipment.html",
+							extras:{
+								infoObj:infoObj
+							},
+							styles: {
+								popGesture:"close"
+							}
+						})
+					}else{
+						mui.toast('请先确认操作人员！');
+					}
+				} catch(e) {
+					mui.toast('非本系统二维码，无法扫描！');
+					return false;
+				}
+				
+			}
+	</script>
+</html>
