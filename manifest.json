@@ -125,5 +125,32 @@
 				}
 			}
 		}
+	},
+	"dependencies": {
+		"pages": {
+			"index.html": {
+				"resources": [],
+				"refer": [
+					"barcode_scan.html",
+					"equipment.html"
+				],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"js/common.js",
+				"js/service.js",
+				"js/mui.min.js",
+				"css/common.css",
+				"fonts/mui.ttf",
+				"css/mui.min.css",
+				"js/vconsole.min.js",
+				"person.html",
+				"js/mui.js",
+				"css/mui.css",
+				"js/immersed.js"
+			]
+		}
 	}
 }

@@ -1,0 +1,8 @@
+{
+	"index.html": {
+		"refer": [
+			"barcode_scan.html",
+			"equipment.html"
+		]
+	}
+}
