@@ -18,7 +18,7 @@
 	<body>
 		<header class="mui-bar mui-bar-nav">
 		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-		    <h1 class="mui-title">产品信息</h1>
+		    <h1 class="mui-title">产品检验</h1>
 		</header>
 		<div class="mui-content">
 			<form class="mui-input-group">
@@ -51,8 +51,12 @@
 			        <input id="writtenBy" type="text" class="mui-input-clear" readonly="readonly">
 			    </div>
 			    <div class="mui-input-row">
-			        <label>填写日期：</label>
-			        <input id="write_date" type="text" class="mui-input-clear" readonly="readonly">
+			        <label>检验结果：</label>
+			        <!--<input id="write_date" type="text" class="mui-input-clear" readonly="readonly">-->
+			        	<select id="inspect">
+			        		<option value="3">合格</option>
+			        		<option value="4">不合格</option>
+			        	</select>
 			    </div>
 			</form>
 		    <button type="button" id="comfirmBtn" class="mui-btn mui-btn-blue" >确认</button>
@@ -68,29 +72,12 @@
 				var modid = self.modid;
 				var pid = self.pid;
 				var routeid = self.routeid;
-				var isfinish = self.isfinish;
 				
 				// ajax获取产品信息
 				var name = document.getElementById("name");
 				var child_material = document.getElementById("child_material");
 				var quantity = document.getElementById("quantity");
-				mui.ajax(url + 'product.php',{
-					data: {
-						flag: '0',
-						id: product_id
-					},
-					dataType:'json',
-					type:'POST', 
-					timeout:10000,
-					success: function (data) {
-						name.value = data[0].name;
-						child_material.value = data[0].child_material;
-						quantity.value = data[0].quantity;
-					},
-					error: function (xhr,type,errorThrown) {
-						alert('ajax错误'+type+'---'+errorThrown+"失败！");
-					}
-				})
+				mui.ajax(url + 'product.php',{})
 				
 				
 				
@@ -100,18 +87,19 @@
 				
 				
 				
-				// 日期填写
-				var write_date = document.getElementById("write_date");
-				write_date.addEventListener('tap',function(){
-					plus.nativeUI.pickDate( function(e){
-					d=e.date;
-                    write_date.value = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-				   });
-				});
+//				// 日期填写
+//				var write_date = document.getElementById("write_date");
+//				write_date.addEventListener('tap',function(){
+//					plus.nativeUI.pickDate( function(e){
+//					d=e.date;
+//                  write_date.value = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+//				   });
+//				});
 				
 				// 确定按钮
 				comfirmBtn.addEventListener('tap',function(){
 					var btnArray = ['否', '是'];
+					var inspect = document.getElementById("inspect").value;
 					mui.confirm('是否确认提交？', '金马web移动端', btnArray, function(e) {
 						if (e.index == 1) {
 							//获取父页面
@@ -121,11 +109,11 @@
 	                    	// 提交
 	                    	mui.ajax(url + 'product.php',{
 								data: {
-									flag: '2',
+									flag: '6',
 									modid: modid,
 									pid: pid,
 									routeid: routeid,
-									isfinish: isfinish,
+									inspect: inspect
 								},
 								dataType:'json',
 								type:'POST', 
