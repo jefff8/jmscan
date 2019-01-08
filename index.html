@@ -1,27 +1,28 @@
 <!DOCTYPE HTML>
 <html>
+
 	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-		<meta name="HandheldFriendly" content="true"/>
-		<meta name="MobileOptimized" content="320"/>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
 		<title></title>
-		<link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8"/>
-		<link rel="stylesheet" href="css/mui.min.css" type="text/css" charset="utf-8"/>
+		<link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="css/mui.min.css" type="text/css" charset="utf-8" />
 		<style>
 			.log_out {
 				display: none;
 				position: absolute;
 				bottom: 0;
 				width: 100%;
-    			font-size: 18px;
+				font-size: 18px;
 				font-weight: normal;
 				text-decoration: none;
 				/*display: block;*/
 				text-align: center;
-				overflow:hidden;
-				text-overflow:ellipsis;
-				white-space:nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 				color: #FFF;
 				background-color: #DD524D;
 				border: 1px solid #DD524D;
@@ -29,158 +30,289 @@
 			}
 		</style>
 	</head>
+
 	<body>
 		<div id="dcontent" class="dcontent">
 			<div class="button" onclick="clicked('barcode_scan.html',true,true)">扫一扫</div>
 			<div id="personInfo">
-				
+
 			</div>
 			<div id="log_out" class="log_out" onclick="log_out()">注销</div>
 		</div>
 	</body>
-	<script type="text/javascript" src="js/immersed.js" ></script>
+	<script type="text/javascript" src="js/immersed.js"></script>
 	<script type="text/javascript" src="js/vconsole.min.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript" src="js/mui.min.js"></script>
 	<script type="text/javascript" src="js/service.js"></script>
 	<script type="text/javascript">
-		
-			var vConsole = new VConsole() // 初始化
-			var returnData = null;
-			var personInfo = document.getElementById("personInfo");
-			var staff = '';
-			var outBtn = document.getElementById("log_out");
-			
-			//人员扫码后返回值
-			window.addEventListener("personInfo", function(e) {
-//			    returnData = e.detail.infoObj;
-//			    personInfo.innerHTML = '';
-//				personInfo.innerHTML = '<h3>已确认操作人员</h3><p>姓名：'+returnData.myname+'</p><p>部门：'+returnData.department+'</p><p>职位：'+returnData.position+'</p>';
-			});
-			
-			//设备扫码后返回值
-			window.addEventListener("equipmentInfo", function(e) {
-				console.log(e);
-//				personInfo.innerHTML = '';
-//				returnData = null;
-				mui.toast('确认成功！');
-			});
+		var vConsole = new VConsole() // 初始化
+		var returnData = null;
+		var personInfo = document.getElementById("personInfo");
+		var staff = '';
+		var test = '';
+		var outBtn = document.getElementById("log_out");
 
-			//扫码二维码
-			function scaned(t, r, f){
-				update(t, r, f);
-			}
-			
-			//获取扫码后信息
-			function update(t, r, f){
-				try {
-					// 二维码信息字符串转换为json格式
-					var qr_info=JSON.parse(r);
-					console.log(qr_info);
-					if(!qr_info.flag) {
-						mui.toast('非本系统二维码，无法扫描！');
-						return false;
-					}
-					switch(qr_info.flag) {
-						case "staff": 
-							// 员工扫码（确认身份）
-							mui.ajax(url + 'staff.php',{
-								data: {
-									id: qr_info.id
-								},
-								dataType:'json',
-								type:'POST', 
-								timeout:10000,
-								success: function (data) {
-									// session保存员工信息
-   									plus.storage.setItem("staff",data[0].name);
-   									staff = plus.storage.getItem("staff");
-   									outBtn.style.display = "block";
-   									personInfo.innerHTML = '<h4>已确认操作人员</h4><p>姓名：'+staff+'</p>';
-								},
-								error: function (xhr,type,errorThrown) {
-									alert('ajax错误'+type+'---'+errorThrown+"失败！");
-								}
-							})
-							
-							break;
-						case "jmmes": 
-							// 设备扫码
-							if (staff) {
-								mui.ajax(url + 'product.php',{
-									data: {
-										flag: '1',
-										modid: qr_info.modid
-									},
-									dataType:'json',
-									type:'POST', 
-									timeout:10000,
-									success: function (data) {
-										var isfinish = data[0].isfinish;
-										var routeid = data[0].routeid;
-										// 判断设备isfinsh状态
-										if (isfinish == '0') {
-											mui.openWindow({
-					 							url: "product.html",
-					 							extras:{
-					 								qr_id: qr_info.id,
-					 								modid: qr_info.modid,
-					 								pid: qr_info.pid,
-					 								routeid: routeid
-					 							},
-					 							styles: {
-					 								popGesture:"close"
-					 							}
-					 						})
-										}else {
-											// 确认完成
-											var btnArray = ['否', '是'];
-											mui.confirm('是否确认完成？', '金马web移动端', btnArray, function(e) {
-												if (e.index == 1) {
-							                    	// 提交
-							                    	mui.ajax(url + 'product.php',{
-														data: {
-															flag: '3',
-															modid: qr_info.modid,
-															pid: qr_info.pid
-														},
-														dataType:'json',
-														type:'POST', 
-														timeout:10000,
-														success: function (data) {
-															mui.toast('确认成功！');
-														},
-														error: function (xhr,type,errorThrown) {
-															alert('ajax错误'+type+'---'+errorThrown+"失败！");
-														}
-													})
-												} else {
-							
-												}
-											})
-										}
-									},
-									error: function (xhr,type,errorThrown) {
-										alert('ajax错误'+type+'---'+errorThrown+"失败！");
-									}
-								})
-							} else {
-								mui.toast('请先确认操作人员！');
-							}
-							break;
-					}
-				} catch(e) {
+		//人员扫码后返回值
+		window.addEventListener("personInfo", function(e) {
+			//			    returnData = e.detail.infoObj;
+			//			    personInfo.innerHTML = '';
+			//				personInfo.innerHTML = '<h3>已确认操作人员</h3><p>姓名：'+returnData.myname+'</p><p>部门：'+returnData.department+'</p><p>职位：'+returnData.position+'</p>';
+		});
+
+		//设备扫码后返回值
+		window.addEventListener("equipmentInfo", function(e) {
+			console.log(e);
+			//				personInfo.innerHTML = '';
+			//				returnData = null;
+			mui.toast('确认成功！');
+		});
+
+		//扫码二维码
+		function scaned(t, r, f) {
+			update(t, r, f);
+		}
+
+		//获取扫码后信息
+		function update(t, r, f) {
+			try {
+				// 二维码信息字符串转换为json格式
+				var qr_info = JSON.parse(r);
+				console.log(qr_info);
+				if(!qr_info.flag) {
 					mui.toast('非本系统二维码，无法扫描！');
 					return false;
 				}
+				switch(qr_info.flag) {
+					case "staff":
+						// 员工扫码（确认身份）
+						mui.ajax(url + 'staff.php', {
+							data: {
+								id: qr_info.id
+							},
+							dataType: 'json',
+							type: 'POST',
+							timeout: 10000,
+							success: function(data) {
+								// session保存员工信息
+								plus.storage.setItem("staff", data[0].name);
+								staff = plus.storage.getItem("staff");
+								outBtn.style.display = "block";
+								personInfo.innerHTML = '<h4>已确认操作人员</h4><p>姓名：' + staff + '</p>';
+							},
+							error: function(xhr, type, errorThrown) {
+								alert('ajax错误' + type + '---' + errorThrown + "失败！");
+							}
+						})
+
+						break;
+					case "test":
+						// 员工扫码（确认身份）
+						mui.ajax(url + 'staff.php', {
+							data: {
+								id: qr_info.id
+							},
+							dataType: 'json',
+							type: 'POST',
+							timeout: 10000,
+							success: function(data) {
+								// session保存员工信息
+								plus.storage.setItem("test", data[0].name);
+								test = plus.storage.getItem("test");
+								outBtn.style.display = "block";
+								personInfo.innerHTML = '<h4>已确认操作人员</h4><p>姓名：' + test + '</p>';
+							},
+							error: function(xhr, type, errorThrown) {
+								alert('ajax错误' + type + '---' + errorThrown + "失败！");
+							}
+						})
+
+						break;
+					case "jmmes":
+						// 设备扫码
+						if(staff) {
+							mui.ajax(url + 'product.php', {
+								data: {
+									flag: '1',
+									modid: qr_info.modid,
+									pid: qr_info.pid
+								},
+								dataType: 'json',
+								type: 'POST',
+								timeout: 10000,
+								success: function(data) {
+									var isfinish = data[0].isfinish;
+									var routeid = data[0].routeid;
+									// 判断车间isfinsh状态
+									if(isfinish == '0') {
+										mui.openWindow({
+											url: "product.html",
+											extras: {
+												qr_id: qr_info.id,
+												modid: qr_info.modid,
+												pid: qr_info.pid,
+												routeid: routeid
+											},
+											styles: {
+												popGesture: "close"
+											}
+										})
+									} else if(isfinish == '2') {
+										//判断工序是否完工
+										mui.ajax(url + 'product.php', {
+											data: {
+												flag: '4',
+												modid: qr_info.modid,
+												routeid: routeid
+											},
+											dataType: 'json',
+											type: 'POST',
+											timeout: 10000,
+											success: function(data) {
+												var isfinish = data[0].isfinish;
+												// 判断工序isfinsh状态
+												if(isfinish == '2') {
+													var btnArray = ['否', '是'];
+													mui.confirm('是否确认完成？', '金马web移动端', btnArray, function(e) {
+														if(e.index == 1) {
+															// 提交
+															mui.ajax(url + 'product.php', {
+																data: {
+																	flag: '5',
+																	modid: qr_info.modid,
+																	pid: qr_info.pid,
+																	routeid: routeid
+																},
+																dataType: 'json',
+																type: 'POST',
+																timeout: 10000,
+																success: function(data) {
+																	mui.toast('确认成功！');
+																},
+																error: function(xhr, type, errorThrown) {
+																	alert('ajax错误' + type + '---' + errorThrown + "失败！");
+																}
+															})
+														} else {
+															alert("66")
+														}
+													})
+												} else if(isfinish == '3') {
+													//合格，进行下一步
+													
+												} else if(isfinish == '4') {
+													//不合格
+//													alert("产品不合格，请合格后再进行扫码！");
+													mui.openWindow({
+														url: "product.html",
+														extras: {
+															qr_id: qr_info.id,
+															modid: qr_info.modid,
+															pid: qr_info.pid,
+															routeid: routeid,
+															isfinish: isfinish,
+														},
+														styles: {
+															popGesture: "close"
+														}
+													})
+												} else {
+													alert("该部件已完工，待检验部门检验合格后再进行操作！");
+												}
+											},
+											error: function(xhr, type, errorThrown) {
+												alert('ajax错误' + type + '---' + errorThrown + "失败！");
+											}
+										})
+
+									} else {
+										alert("已完工，请检验！")
+									}
+								},
+								error: function(xhr, type, errorThrown) {
+									alert('ajax错误' + type + '---' + errorThrown + "失败！");
+								}
+							})
+						} else if(test) {
+							mui.ajax(url + 'product.php', {
+								data: {
+									flag: '1',
+									modid: qr_info.modid,
+									pid: qr_info.pid
+								},
+								dataType: 'json',
+								type: 'POST',
+								timeout: 10000,
+								success: function(data) {
+									var isfinish = data[0].isfinish;
+									var routeid = data[0].routeid;
+									// 判断车间isfinsh状态
+									if(isfinish == '2') {
+										//检验
+										mui.ajax(url + 'product.php', {
+											data: {
+												flag: '4',
+												modid: qr_info.modid,
+												routeid: routeid
+											},
+											dataType: 'json',
+											type: 'POST',
+											timeout: 10000,
+											success: function(data) {
+												var isfinish = data[0].isfinish;
+												// 判断工序isfinsh状态
+												if(isfinish == '1') {
+													mui.openWindow({
+														url: "inspect.html",
+														extras: {
+															qr_id: qr_info.id,
+															modid: qr_info.modid,
+															pid: qr_info.pid,
+															routeid: routeid
+														},
+														styles: {
+															popGesture: "close"
+														}
+													})
+												} else if(isfinish == '4') {
+													//不合格
+													alert("产品不合格，待产品完工后再检验！");
+												} else {
+													alert("已完工");
+												}
+											},
+											error: function(xhr, type, errorThrown) {
+												alert('ajax错误' + type + '---' + errorThrown + "失败！");
+											}
+										})
+									} else {
+
+									}
+								},
+								error: function(xhr, type, errorThrown) {
+									alert('ajax错误' + type + '---' + errorThrown + "失败！");
+								}
+							})
+
+						} else {
+							mui.toast('请先确认操作人员！');
+						}
+						break;
+				}
+			} catch(e) {
+				console.log(e)
+				mui.toast('非本系统二维码，无法扫描1！');
+				return false;
 			}
-			
-			// 注销
-			function log_out() {
-				plus.storage.clear();
-				staff = '';
-				personInfo.innerHTML = '<p>注销成功!</p>';
-				outBtn.style.display = "none";
-			}
+		}
+
+		// 注销
+		function log_out() {
+			plus.storage.clear();
+			staff = '';
+			personInfo.innerHTML = '<p>注销成功!</p>';
+			outBtn.style.display = "none";
+		}
 	</script>
+
 </html>
