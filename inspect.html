@@ -6,10 +6,12 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/my_css.css" rel="stylesheet">
+		<link href="css/testphoto.css" rel="stylesheet">
 		<style>
-			#comfirmBtn{
+			#photoBtn {
 				width: 100%;
-				height:40px;
+				height: 40px;
 				margin-top: 10px;
 			}
 		</style>
@@ -17,12 +19,12 @@
 
 	<body>
 		<header class="mui-bar mui-bar-nav">
-		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-		    <h1 class="mui-title">产品检验</h1>
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">产品检验</h1>
 		</header>
 		<div class="mui-content">
 			<form class="mui-input-group">
-			    <div class="mui-input-row">
+				<!--<div class="mui-input-row">
 			        <label>产品型号：</label>
 			        <input id="name" type="text" class="mui-input-clear" readonly="readonly">
 			    </div>
@@ -45,92 +47,109 @@
 			    <div class="mui-input-row">
 			        <label>零件名称：</label>
 			        <input type="text" class="mui-input-clear" >
-			    </div>
-			    <div class="mui-input-row">
-			        <label>填写人：</label>
-			        <input id="writtenBy" type="text" class="mui-input-clear" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>检验结果：</label>
-			        <!--<input id="write_date" type="text" class="mui-input-clear" readonly="readonly">-->
-			        	<select id="inspect">
-			        		<option value="3">合格</option>
-			        		<option value="4">不合格</option>
-			        	</select>
-			    </div>
+			    </div>-->
+				<div class="mui-input-row">
+					<label>填写人：</label>
+					<input id="writtenBy" type="text" class="mui-input-clear" readonly="readonly">
+				</div>
+				<div class="mui-input-row">
+					<label>检验结果：</label>
+					<!--<input id="write_date" type="text" class="mui-input-clear" readonly="readonly">-->
+					<select id="inspect" style="font-size: 14px;">
+						<option value="3">合格</option>
+						<option value="4">不合格</option>
+					</select>
+				</div>
 			</form>
-		    <button type="button" id="comfirmBtn" class="mui-btn mui-btn-blue" >确认</button>
+			<div id="myform" class="mui-button-row ">
+				<button type="button" id="photoBtn" class="mui-btn mui-btn-primary">上传检验照片</button>
+			</div>
 		</div>
 		<script src="js/mui.min.js"></script>
-		<script type="text/javascript" src="js/service.js"></script>
+		<script src="js/common.js"></script>
+		<script src="js/immersed.js"></script>
+		<script src="js/service.js"></script>
 		<script type="text/javascript">
 			mui.init()
-			
+
 			mui.plusReady(function() {
 				var self = plus.webview.currentWebview();
 				var product_id = self.qr_id;
 				var modid = self.modid;
 				var pid = self.pid;
 				var routeid = self.routeid;
-				
+
 				// ajax获取产品信息
 				var name = document.getElementById("name");
 				var child_material = document.getElementById("child_material");
 				var quantity = document.getElementById("quantity");
-				mui.ajax(url + 'product.php',{})
-				
-				
-				
+				mui.ajax(url + 'product.php', {})
+
 				// 获取填写人
 				var writtenBy = document.getElementById("writtenBy");
 				writtenBy.value = plus.storage.getItem("staff");
-				
-				
-				
-//				// 日期填写
-//				var write_date = document.getElementById("write_date");
-//				write_date.addEventListener('tap',function(){
-//					plus.nativeUI.pickDate( function(e){
-//					d=e.date;
-//                  write_date.value = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-//				   });
-//				});
-				
-				// 确定按钮
-				comfirmBtn.addEventListener('tap',function(){
-					var btnArray = ['否', '是'];
-					var inspect = document.getElementById("inspect").value;
-					mui.confirm('是否确认提交？', '金马web移动端', btnArray, function(e) {
-						if (e.index == 1) {
-							//获取父页面
-	                    	var main=plus.webview.getWebviewById("HBuilder");
-	                    	//自定义事件,事件名为changeCity
-	                    	mui.fire(main,'equipmentInfo',{product_id:product_id});
-	                    	// 提交
-	                    	mui.ajax(url + 'product.php',{
-								data: {
-									flag: '6',
-									modid: modid,
-									pid: pid,
-									routeid: routeid,
-									inspect: inspect
-								},
-								dataType:'json',
-								type:'POST', 
-								timeout:10000,
-								success: function (data) {
-									mui.back();
-									mui.toast('确认成功！');
-								},
-								error: function (xhr,type,errorThrown) {
-									alert('ajax错误'+type+'---'+errorThrown+"失败！");
-								}
-							})
-						} else {
-	
+
+				//				// 日期填写
+				//				var write_date = document.getElementById("write_date");
+				//				write_date.addEventListener('tap',function(){
+				//					plus.nativeUI.pickDate( function(e){
+				//					d=e.date;
+				//                  write_date.value = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+				//				   });
+				//				});
+
+				//照片
+				var photoBtn = document.getElementById("photoBtn");
+				photoBtn.addEventListener('tap', function() {
+					photoBtn.classList.remove('my_none');
+					mui.openWindow({
+						url: "testphoto.html",
+						extras: {
+
+						},
+						styles: {
+							popGesture: "close"
 						}
 					})
-				})	
+				});
+
+				// 确定按钮
+//				photoBtn.addEventListener('tap', function() {
+//					var btnArray = ['否', '是'];
+//					var inspect = document.getElementById("inspect").value;
+//					mui.confirm('是否确认提交？', '金马web移动端', btnArray, function(e) {
+//						if(e.index == 1) {
+//							//获取父页面
+//							var main = plus.webview.getWebviewById("HBuilder");
+//							//自定义事件,事件名为changeCity
+//							mui.fire(main, 'equipmentInfo', {
+//								product_id: product_id
+//							});
+//							// 提交
+//							mui.ajax(url + 'product.php', {
+//								data: {
+//									flag: '6',
+//									modid: modid,
+//									pid: pid,
+//									routeid: routeid,
+//									inspect: inspect
+//								},
+//								dataType: 'json',
+//								type: 'POST',
+//								timeout: 10000,
+//								success: function(data) {
+//									mui.back();
+//									mui.toast('确认成功！');
+//								},
+//								error: function(xhr, type, errorThrown) {
+//									alert('ajax错误' + type + '---' + errorThrown + "失败！");
+//								}
+//							})
+//						} else {
+//
+//						}
+//					})
+//				})
 			})
 		</script>
 	</body>

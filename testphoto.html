@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>同欣易送检</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/my_css.css">
+		<!--<link rel="stylesheet" href="css/testphoto.css" />-->
+		<style type="text/css">
+			#comfirmBtn {
+				width: 100%;
+				height: 40px;
+				margin-top: 10px;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="refresh" class="mui-title">照片上传</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-content" id="refreshContainer">
+					<div id="myform" class="mui-content">
+
+					</div>
+					<div id="uploader" class="">
+						<div id="upload_camera">
+							<form class="mui-input-group">
+								<div class="mui-input-row">
+									<label>照片上传：</label>
+									<input class="upload_camera" type="text" placeholder="点击添加" readonly="readonly">
+								</div>
+								<div style="margin-top: -10px;padding-bottom: 1px;">
+									<ul id="history_yszp" class="dlist" style="text-align:left;">
+										<li id="empty_yszp" class="ditem-empty">无历史记录</li>
+									</ul>
+									<div class="mui-button-row">
+										<button id="clean_yszp" type="button" class="mui-btn mui-btn-primary" onclick="cleanHistory('yszp');">清空记录</button>
+										<button id="yszp" type="button" class="mui-btn mui-btn-primary" onclick="upload(this.id,'clean_yszp');">上传照片</button>
+									</div>
+									<!--<button type="button" id="comfirmBtn" class="mui-btn mui-btn-primary ">确认</button>-->
+								</div>
+							</form>
+						</div>
+					</div>
+			</div>
+			<div id="output">
+				<!--Camera管理摄像头设备，可用于拍摄照片、录制视频文件。      -->
+			</div>
+	</body>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="js/mui.min.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/immersed.js"></script>
+	<script src="js/service.js"></script>
+	<script src="js/testphoto.js"></script>
+	<script type="text/javascript">
+		mui.init({
+			gestureConfig: {
+				longtap: true, //长按默认为false
+				doubletap: true
+			}
+		});
+		mui.plusReady(function() {
+			var refresh = document.getElementById("refresh");
+			//监听标题栏的双击事件(刷新页面)
+			refresh.addEventListener('doubletap', function() {
+				window.location.reload();
+			});
+		});
+	</script>
+
+</html>
