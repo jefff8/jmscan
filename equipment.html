@@ -50,7 +50,7 @@
 				var self = plus.webview.currentWebview();
 				var infoObj = self.infoObj;
 				var product_id = self.qr_id;
-				var equnumber = self.equnumber;
+				var equNum = self.equNum;
 				
 				//ajax获取点检信息
 				var name = document.getElementById("name");
@@ -60,7 +60,7 @@
 					data: {
 						flag: '0',
 						id: product_id,
-						equnumber: equnumber
+						equNum: equNum
 					},
 					dataType:'json',
 					type:'POST', 
