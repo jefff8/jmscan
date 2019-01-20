@@ -14,6 +14,7 @@
 				height: 40px;
 				margin-top: 10px;
 			}
+			
 			#saveBtn {
 				width: 48%;
 				height: 40px;
@@ -25,50 +26,25 @@
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">产品检验</h1>
+			<h1 class="mui-title">产品完工</h1>
 		</header>
 		<div class="mui-content">
 			<form class="mui-input-group">
-				<!--<div class="mui-input-row">
-			        <label>产品型号：</label>
-			        <input id="name" type="text" class="mui-input-clear" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>图号：</label>
-			        <input id="child_material" type="text" class="mui-input-clear" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>工单号：</label>
-			        <input type="text" class="mui-input-clear" value="110#" readonly="readonly" >
-			    </div>
-			    <div class="mui-input-row">
-			        <label>零件数量：</label>
-			        <input id="quantity" type="text" class="mui-input-clear" >
-			    </div>
-			    <div class="mui-input-row">
-			        <label>下工序：</label>
-			        <input type="text" class="mui-input-clear" value="T装" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>零件名称：</label>
-			        <input type="text" class="mui-input-clear" >
-			    </div>-->
 				<div class="mui-input-row">
 					<label>填写人：</label>
 					<input id="writtenBy" type="text" class="mui-input-clear" readonly="readonly">
 				</div>
-				<div class="mui-input-row">
+				<!--<div class="mui-input-row">
 					<label>检验结果：</label>
-					<!--<input id="write_date" type="text" class="mui-input-clear" readonly="readonly">-->
 					<select id="inspect" style="font-size: 14px;">
 						<option value="3">合格</option>
 						<option value="4">不合格</option>
 					</select>
+				</div>-->
+				<div class="mui-input-row">
+					<label>填写日期：</label>
+					<input id="write_date" type="text" class="mui-input-clear" readonly="readonly">
 				</div>
-				 <div class="mui-input-row">
-			        <label>填写日期：</label>
-			        <input id="write_date" type="text" class="mui-input-clear" readonly="readonly">
-			    </div>
 			</form>
 			<div id="myform" class="mui-button-row ">
 				<button type="button" id="photoBtn" class="mui-btn mui-btn-primary">上传照片</button>
@@ -80,54 +56,51 @@
 		<script src="js/immersed.js"></script>
 		<script src="js/service.js"></script>
 		<script type="text/javascript">
-			
 			var photoBtn = document.getElementById("photoBtn");
 			var saveBtn = document.getElementById("saveBtn");
-			
-			window.addEventListener('refresh',function(event){
-			   saveBtn.classList.remove('my_none');
+
+			window.addEventListener('refresh', function(event) {
+				saveBtn.classList.remove('my_none');
 			});
 			mui.plusReady(function() {
 				var self = plus.webview.currentWebview();
 				var product_id = self.qr_id;
-				var wid = self.wid;
 				var modid = self.modid;
-				var pid = self.pid;	
+				var id = self.id;
+				var pid = self.pid;
 				var flag = self.flag;	
 				var routeid = self.routeid;
-//				alert(wid)
 
 				// ajax获取产品信息
 				var name = document.getElementById("name");
 				var child_material = document.getElementById("child_material");
 				var quantity = document.getElementById("quantity");
-				mui.ajax(url + 'product.php', {
-					
-				})
+//				mui.ajax(url + 'product.php', {
+//
+//				})
 
 				// 获取填写人
 				var writtenBy = document.getElementById("writtenBy");
-				writtenBy.value = localStorage.getItem("test");
+				writtenBy.value = localStorage.getItem("staff");
 
 				// 日期填写
 				var write_date = document.getElementById("write_date");
-				write_date.addEventListener('tap',function(){
-					plus.nativeUI.pickDate( function(e){
-					d=e.date;
-                    write_date.value = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-				  });
+				write_date.addEventListener('tap', function() {
+					plus.nativeUI.pickDate(function(e) {
+						d = e.date;
+						write_date.value = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+					});
 				});
-				
+
 				//照片
 				photoBtn.addEventListener('tap', function() {
-					
 					mui.openWindow({
 						url: "photoupload.html",
 						id: "photoupload",
 						extras: {
 							flag: flag,
-							wid: wid,
 							pid: pid,
+							id: id,
 							modid: modid,
 							routeid: routeid,
 						},
@@ -140,27 +113,18 @@
 				// 确定按钮
 				saveBtn.addEventListener('tap', function() {
 					var btnArray = ['否', '是'];
-					var inspect = document.getElementById("inspect").value;
-					mui.confirm('是否确认提交？', '金马web移动端', btnArray, function(e) {
+					mui.confirm('是否确认完成？', '金马web移动端', btnArray, function(e) {
 						if(e.index == 1) {
-							//获取父页面
-							var main = plus.webview.getWebviewById("HBuilder");
-							//自定义事件,事件名为changeCity
-							mui.fire(main, 'equipmentInfo', {
-								product_id: product_id
-							});
 							// 提交
 							mui.ajax(url + 'product.php', {
 								data: {
-									flag: '6',
+									flag: '5',
 									modid: modid,
 									pid: pid,
 									routeid: routeid,
-									inspect: inspect,
+									messageid: localStorage['messageid'],
 									route: localStorage['route'],
 									station: localStorage['station'],
-									messageid: localStorage['messageid'],
-									write_date: write_date.value
 								},
 								dataType: 'json',
 								type: 'POST',

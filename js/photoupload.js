@@ -19,72 +19,16 @@ mui('.mui-scroll-wrapper').scroll({
 
 mui.plusReady(function() {
 
-	//获取url参数值
-	function geturl(name) {
-		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-		var r = window.location.search.substr(1).match(reg);
-		if(r != null) return unescape(r[2]);
-		return null;
-	}
-	var xmid = geturl("id");
-	var CityName = geturl("CityName");
-	var ysbw = geturl("jcbw"); //检查部位
-	var ysrq = geturl("jcrq"); //检查日期
-	var mc = geturl("mc");
-	var sjc = geturl("timestamp");
-	var checkId = geturl("checkId");
-	var gcmc = geturl("gcmc");
-	//	alert(checkId);
-	//      alert(sjc)
-	ysbw = decodeURI(ysbw);
-	gcmc = decodeURI(gcmc);
-	CityName = decodeURI(CityName); //转码成中文
-	//	alert(CityName)
-	mc = decodeURI(mc);
-	//				alert(xmid+"  "+mc+"  "+sjc); 
-	var a1 = document.getElementById('a1');
-
-	var mc = document.getElementById("mc"); //姓名
-	var jcbw = document.getElementById("jcbw"); //检查部位
-	var jcrq = document.getElementById("jcrq"); //检查日期
-	var jcry = document.getElementById("jcry"); //检查人员
-	var sgbz = document.getElementById("sgbz"); //施工班组
-	var zzxm = document.getElementById("zzxm"); //组长姓名
-	var lxdh = document.getElementById("lxdh"); //联系电话
-	var sgrq = document.getElementById("sgrq"); //施工日期
-	var gzms = document.getElementById("gzms"); //工作描述
+	//	var self = plus.webview.currentWebview();
+	//	var modid = self.modid;
+	//	var id = self.id;
+	//	var routeid = self.routeid;
 
 	var save = document.getElementById('save'); //保存按钮
-	//	var fjck = document.getElementById('fjck'); //附件查看
 	var fjscxg = document.getElementById('fjscxg'); //附件上传/修改
-
 	var myform = document.getElementById('myform'); //基本信息
 	var uploader = document.getElementById('uploader'); //上传附件
 
-	var my_popover = document.getElementById('my_popover'); //右上角按钮
-	var plsr = document.getElementById('plsr'); //批量按钮
-
-	var bhao = document.getElementById('bhao'); //编号
-	var cdlx = document.getElementById('cdlx'); //测点类型
-	var scz = document.getElementById('scz'); //实测值
-	var scgbi = document.getElementById('scgbi'); //关闭
-	var scqding = document.getElementById('scqding'); //确定
-
-	var mydiv = document.getElementById('mydiv'); //测点布置图
-	var kbbhao = document.getElementById('kbbhao'); //测点编号
-	var kbcdlx = document.getElementById('kbcdlx'); //测点类型
-	var kbscz = document.getElementById('kbscz'); //实测值
-	var kbgbi = document.getElementById('kbgbi'); //关闭
-	var kbqding = document.getElementById('kbqding'); //确定
-
-	var xztp = document.getElementById("xztp"); //选择图片
-	var qkbz = document.getElementById('qkbz'); //清空布置
-	var bcbz = document.getElementById('bcbz'); //保存布置
-	var yjbz = document.getElementById('yjbz'); //一键布置
-	var out = document.getElementById('out'); //操作
-	var jp = document.getElementById("jp"); //截屏布点
-	var jccd = new Array(); //检测被隐藏的span1
-	var zhtj = document.getElementById("zhtj");
 	//监听upload_camera,打开原生操作列表
 	var upload_camera = document.getElementById('upload_camera');
 
@@ -103,10 +47,12 @@ mui.plusReady(function() {
 
 	var myactionSheet = function(lx) {
 		var btnArray = [{
-			title: "拍照"
-		}, {
-			title: "相册"
-		}];
+				title: "拍照"
+			},
+			//		{
+			//			title: "相册"
+			//		}
+		];
 		plus.nativeUI.actionSheet({
 			title: "操作",
 			cancel: "取消",
@@ -122,10 +68,10 @@ mui.plusReady(function() {
 					getImage(lx);
 					text += "拍照";
 					break;
-				case 2:
-					galleryImg(lx);
-					text += "相册";
-					break;
+					//				case 2:
+					//					galleryImg(lx);
+					//					text += "相册";
+					//					break;
 			}
 			//info.innerHTML = text+"\"按钮";
 		});
@@ -144,7 +90,7 @@ var hl = null,
 var unv = true;
 // H5 plus  上传照片 事件处理
 function plusReady_camera() {
-	
+
 	// 获取摄像头目录对象
 	plus.io.resolveLocalFileSystemURL("_doc/", function(entry) {
 		entry.getDirectory("camera/fhys", {
@@ -359,22 +305,13 @@ var files = [];
 var files_yszp = [];
 
 function upload(lx, clean) {
-	//获取url参数值
-	function geturl(name) {
-		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-		var r = window.location.search.substr(1).match(reg);
-		if(r != null) return unescape(r[2]);
-		return null;
-	}
-	var sjc = "111111";
-//	var xmid = geturl("gcid");
-//	var mc = geturl("mc");
-//	var gclb = geturl("gclb");
-//	var checkId = geturl("checkId");
-	var sclb;
-//	gclb = decodeURI(gclb);
-//	mc = decodeURI(mc);
-//					alert(sjc);
+	//检验返回调用父节点
+	var inspect = plus.webview.getWebviewById('inspect');
+	mui.fire(inspect, 'refresh');
+	//完工返回调用父节点
+	var finished = plus.webview.getWebviewById('finished');
+	mui.fire(finished, 'refresh');
+
 	if(lx == 'yszp') {
 		files = files_yszp;
 	} else {
@@ -396,7 +333,8 @@ function upload(lx, clean) {
 			var button_lx = document.getElementById(lx);
 			var button_clean = document.getElementById(clean);
 			//			alert("上传成功!"+t.responseText);
-			alert("上传成功!");
+			mui.back();
+			mui.toast('确认成功！');
 		} else {
 			outLine("上传失败：" + status);
 			wt.close();
@@ -406,15 +344,23 @@ function upload(lx, clean) {
 	//				alert(sjc);
 	//添加上传数据 
 	//	task.addData("lx", lx);
+	//获取url参数值
+	var self = plus.webview.currentWebview();
+	var modid = self.modid;
+	var wid = self.wid; //workshop_k表id
+	var pid = self.pid;
+	var routeid = self.routeid;
+	var flag = self.flag;
+//	alert(pid)
+//	alert(modid)
 	task.addData("uid", getUid());
 	nub = files.length.toString();
 	task.addData("nub", nub);
-	task.addData("sjc", sjc);
-	//	task.addData("xmid", xmid);
-	//	task.addData("gclb", gclb);
-	//	task.addData("mc", mc);
-	//	task.addData("checkId", checkId);
-	//	task.addData("sclb", '实测实量');
+	task.addData("modid", modid);
+	task.addData("wid", wid);
+	task.addData("pid", pid);
+	task.addData("routeid", routeid);
+	task.addData("flag", flag);
 	for(var i = 0; i < files.length; i++) {
 		var f = files[i];
 		task.addFile(f.path, {

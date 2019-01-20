@@ -2,7 +2,31 @@
 	"index.html": {
 		"refer": [
 			"barcode_scan.html",
-			"equipment.html"
+			"equipment.html",
+			"inspect.html",
+			"product.html",
+			"finished.html"
+		]
+	},
+	"testphoto.html": {
+		"refer": [
+			"camera_image.html"
+		]
+	},
+	"inspect.html": {
+		"refer": [
+			"testphoto.html",
+			"photoupload.html"
+		]
+	},
+	"photoupload.html": {
+		"refer": [
+			"camera_image.html"
+		]
+	},
+	"finished.html": {
+		"refer": [
+			"photoupload.html"
 		]
 	}
 }

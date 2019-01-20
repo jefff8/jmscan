@@ -132,7 +132,39 @@
 				"resources": [],
 				"refer": [
 					"barcode_scan.html",
-					"equipment.html"
+					"equipment.html",
+					"inspect.html",
+					"product.html",
+					"finished.html"
+				],
+				"priority": 0
+			},
+			"testphoto.html": {
+				"resources": [],
+				"refer": [
+					"camera_image.html"
+				],
+				"priority": 0
+			},
+			"inspect.html": {
+				"resources": [],
+				"refer": [
+					"testphoto.html",
+					"photoupload.html"
+				],
+				"priority": 0
+			},
+			"photoupload.html": {
+				"resources": [],
+				"refer": [
+					"camera_image.html"
+				],
+				"priority": 0
+			},
+			"finished.html": {
+				"resources": [],
+				"refer": [
+					"photoupload.html"
 				],
 				"priority": 0
 			}

@@ -39,12 +39,12 @@
 			        <input id="quantity" type="text" class="mui-input-clear" >
 			    </div>
 			    <div class="mui-input-row">
-			        <label>下工序：</label>
-			        <input type="text" class="mui-input-clear" value="T装" readonly="readonly">
+			        <label>车间：</label>
+			        <input id="route" type="text" class="mui-input-clear" readonly="readonly">
 			    </div>
 			    <div class="mui-input-row">
-			        <label>零件名称：</label>
-			        <input type="text" class="mui-input-clear" >
+			        <label>工序：</label>
+			        <input id="station" type="text" class="mui-input-clear" >
 			    </div>
 			    <div class="mui-input-row">
 			        <label>填写人：</label>
@@ -59,7 +59,9 @@
 		</div>
 		<script src="js/mui.min.js"></script>
 		<script type="text/javascript" src="js/service.js"></script>
+		<script type="text/javascript" src="js/vconsole.min.js"></script>
 		<script type="text/javascript">
+			var vConsole = new VConsole() // 初始化
 			mui.init()
 			
 			mui.plusReady(function() {
@@ -69,16 +71,20 @@
 				var pid = self.pid;
 				var routeid = self.routeid;
 				var isfinish = self.isfinish;
-				alert(routeid)
 				
 				// ajax获取产品信息
 				var name = document.getElementById("name");
 				var child_material = document.getElementById("child_material");
 				var quantity = document.getElementById("quantity");
+				var route = document.getElementById("route");
+				var station = document.getElementById("station");
 				mui.ajax(url + 'product.php',{
 					data: {
 						flag: '0',
-						id: product_id
+						id: product_id,
+						pid: pid,
+						modid: modid,
+						routeid:routeid
 					},
 					dataType:'json',
 					type:'POST', 
@@ -87,19 +93,19 @@
 						name.value = data[0].name;
 						child_material.value = data[0].child_material;
 						quantity.value = data[0].quantity;
+						route.value = data[0].route;
+						station.value = data[0].station;
+						localStorage.setItem('route',data[0].route);
+						localStorage.setItem('station',data[0].station);
 					},
 					error: function (xhr,type,errorThrown) {
 						alert('ajax错误'+type+'---'+errorThrown+"失败！");
 					}
 				})
 				
-				
-				
 				// 获取填写人
 				var writtenBy = document.getElementById("writtenBy");
-				writtenBy.value = plus.storage.getItem("staff");
-				
-				
+				writtenBy.value = localStorage.getItem("staff");
 				
 				// 日期填写
 				var write_date = document.getElementById("write_date");
@@ -107,7 +113,7 @@
 					plus.nativeUI.pickDate( function(e){
 					d=e.date;
                     write_date.value = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-				   });
+				  });
 				});
 				
 				// 确定按钮
@@ -127,11 +133,16 @@
 									pid: pid,
 									routeid: routeid,
 									isfinish: isfinish,
+									route: localStorage['route'],
+									station: localStorage['station'],
+									write_date: write_date.value
 								},
 								dataType:'json',
 								type:'POST', 
 								timeout:10000,
 								success: function (data) {
+//									alert(data)
+									localStorage.setItem('messageid',data['messageid']);
 									mui.back();
 									mui.toast('确认成功！');
 								},
