@@ -28,7 +28,7 @@
 			    </div>
 			    <div class="mui-input-row">
 			        <label>图号：</label>
-			        <input id="child_material" type="text" class="mui-input-clear" readonly="readonly">
+			        <input id="figure_number" type="text" class="mui-input-clear" readonly="readonly">
 			    </div>
 			    <div class="mui-input-row">
 			        <label>工单号：</label>
@@ -36,7 +36,7 @@
 			    </div>
 			    <div class="mui-input-row">
 			        <label>零件数量：</label>
-			        <input id="quantity" type="text" class="mui-input-clear" >
+			        <input id="count" type="text" class="mui-input-clear" >
 			    </div>
 			    <div class="mui-input-row">
 			        <label>车间：</label>
@@ -72,10 +72,13 @@
 				var routeid = self.routeid;
 				var isfinish = self.isfinish;
 				
+//				alert(modid);
+//				alert(routeid);
+				
 				// ajax获取产品信息
 				var name = document.getElementById("name");
-				var child_material = document.getElementById("child_material");
-				var quantity = document.getElementById("quantity");
+				var figure_number = document.getElementById("figure_number");
+				var count = document.getElementById("count");
 				var route = document.getElementById("route");
 				var station = document.getElementById("station");
 				mui.ajax(url + 'product.php',{
@@ -91,8 +94,8 @@
 					timeout:10000,
 					success: function (data) {
 						name.value = data[0].name;
-						child_material.value = data[0].child_material;
-						quantity.value = data[0].quantity;
+						figure_number.value = data[0].figure_number;
+						count.value = data[0].count;
 						route.value = data[0].route;
 						station.value = data[0].station;
 						localStorage.setItem('route',data[0].route);
@@ -135,7 +138,8 @@
 									isfinish: isfinish,
 									route: localStorage['route'],
 									station: localStorage['station'],
-									write_date: write_date.value
+									write_date: write_date.value,
+									name: name.value,
 								},
 								dataType:'json',
 								type:'POST', 
