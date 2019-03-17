@@ -159,6 +159,7 @@
 								type: 'POST',
 								timeout: 10000,
 								success: function(data) {
+									console.log(data[0].isfinish);
 									var isfinish = data[0].isfinish;
 									var routeid = data[0].routeid;
 									// 判断车间isfinsh状态
@@ -171,9 +172,9 @@
 												pid: qr_info.pid,
 												routeid: routeid
 											},
-											styles: {
-												popGesture: "close"
-											}
+//											styles: {
+//												popGesture: "close"
+//											}
 										})
 									} else if(isfinish == '2') {
 										//判断工序是否完工
@@ -245,7 +246,7 @@
 										})
 
 									} else {
-										alert("该车间已完工！")
+										alert("未知bug！")
 									}
 								},
 								error: function(xhr, type, errorThrown) {

@@ -29,30 +29,34 @@
 		</header>
 		<div class="mui-content">
 			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>产品型号：</label>
+					<input id="name" type="text" class="mui-input-clear" readonly="readonly">
+				</div>
+				<div class="mui-input-row">
+					<label>图号：</label>
+					<input id="figure_number" type="text" class="mui-input-clear" readonly="readonly">
+				</div>
 				<!--<div class="mui-input-row">
-			        <label>产品型号：</label>
-			        <input id="name" type="text" class="mui-input-clear" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>图号：</label>
-			        <input id="child_material" type="text" class="mui-input-clear" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>工单号：</label>
-			        <input type="text" class="mui-input-clear" value="110#" readonly="readonly" >
-			    </div>
-			    <div class="mui-input-row">
-			        <label>零件数量：</label>
-			        <input id="quantity" type="text" class="mui-input-clear" >
-			    </div>
-			    <div class="mui-input-row">
-			        <label>下工序：</label>
-			        <input type="text" class="mui-input-clear" value="T装" readonly="readonly">
-			    </div>
-			    <div class="mui-input-row">
-			        <label>零件名称：</label>
-			        <input type="text" class="mui-input-clear" >
-			    </div>-->
+					<label>工单号：</label>
+					<input type="text" class="mui-input-clear" value="110#" readonly="readonly">
+				</div>-->
+				<div class="mui-input-row">
+					<label>零件数量：</label>
+					<input id="count" type="text" class="mui-input-clear">
+				</div>
+				<div class="mui-input-row">
+					<label>车间：</label>
+					<input id="route" type="text" class="mui-input-clear" readonly="readonly">
+				</div>
+				<div class="mui-input-row">
+					<label>工序：</label>
+					<input id="station" type="text" class="mui-input-clear">
+				</div>
+				<div class="mui-input-row">
+					<label>返工次数：</label>
+					<input id="rework" type="text" class="mui-input-clear">
+				</div>
 				<div class="mui-input-row">
 					<label>填写人：</label>
 					<input id="writtenBy" type="text" class="mui-input-clear" readonly="readonly">
@@ -65,7 +69,11 @@
 						<option value="4">不合格</option>
 					</select>
 				</div>
-				 <div class="mui-input-row">
+				<div class="mui-input-row" >
+			        <label>返工原因：</label>
+			        <input id="remark" type="text" class="mui-input-clear" value="无" >
+			    </div>
+				<div class="mui-input-row">
 			        <label>填写日期：</label>
 			        <input id="write_date" type="text" class="mui-input-clear" readonly="readonly">
 			    </div>
@@ -98,11 +106,42 @@
 //				alert(wid)
 
 				// ajax获取产品信息
-				var name = document.getElementById("name");
+//				var name = document.getElementById("name");
 				var child_material = document.getElementById("child_material");
 				var quantity = document.getElementById("quantity");
+				var name = document.getElementById("name");
+				var figure_number = document.getElementById("figure_number");
+				var count = document.getElementById("count");
+				var route = document.getElementById("route");
+				var station = document.getElementById("station");
+				var rework = document.getElementById("rework");
+				var remark = document.getElementById("remark");
 				mui.ajax(url + 'product.php', {
-					
+					data: {
+						flag: '0',
+						id: product_id,
+						pid: pid,
+						modid: modid,
+						routeid: routeid
+					},
+					dataType: 'json',
+					type: 'POST',
+					timeout: 10000,
+					success: function(data) {
+						console.log(data)
+						name.value = data[0].name;
+						figure_number.value = data[0].figure_number;
+						count.value = data[0].count;
+						route.value = data[0].route;
+						station.value = data[0].station;
+						rework.value = data[0].notNum;
+						localStorage.setItem('route', data[0].route);
+						localStorage.setItem('station', data[0].station);
+					},
+					error: function(xhr, type, errorThrown) {
+//						alert('ajax错误' + type + '---' + errorThrown + "失败！");
+						alert("该部件其他车间的工序未排产！请联系相关人员！")
+					}
 				})
 
 				// 获取填写人
@@ -160,7 +199,9 @@
 									route: localStorage['route'],
 									station: localStorage['station'],
 									messageid: localStorage['messageid'],
-									write_date: write_date.value
+									write_date: write_date.value,
+									remark: remark.value,
+									name: name.value,
 								},
 								dataType: 'json',
 								type: 'POST',
