@@ -103,7 +103,7 @@
 				var pid = self.pid;	
 				var flag = self.flag;	
 				var routeid = self.routeid;
-//				alert(wid)
+//				alert(modid)
 
 				// ajax获取产品信息
 //				var name = document.getElementById("name");
@@ -128,7 +128,7 @@
 					type: 'POST',
 					timeout: 10000,
 					success: function(data) {
-						console.log(data)
+//						alert(data)
 						name.value = data[0].name;
 						figure_number.value = data[0].figure_number;
 						count.value = data[0].count;
@@ -139,8 +139,8 @@
 						localStorage.setItem('station', data[0].station);
 					},
 					error: function(xhr, type, errorThrown) {
-//						alert('ajax错误' + type + '---' + errorThrown + "失败！");
-						alert("该部件其他车间的工序未排产！请联系相关人员！")
+						alert('ajax错误' + type + '---' + errorThrown + "失败！");
+//						alert("该部件其他车间的工序未排产！请联系相关人员！")
 					}
 				})
 

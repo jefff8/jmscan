@@ -159,7 +159,7 @@
 								type: 'POST',
 								timeout: 10000,
 								success: function(data) {
-									console.log(data[0].isfinish);
+									console.log(data[0].routeid);
 									var isfinish = data[0].isfinish;
 									var routeid = data[0].routeid;
 									// 判断车间isfinsh状态
@@ -246,7 +246,8 @@
 										})
 
 									} else {
-										alert("未知bug！")
+//										alert("未知bug！")
+										alert("该部件下道工序未排产，待车间主任排产后再进行操作！！")
 									}
 								},
 								error: function(xhr, type, errorThrown) {
